@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>What's the weather like?</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.css" />
+    <style>
+        body {
+            background-size: cover;
+            background-position: center;
+            transition: background-image 1s ease-in-out;
+        }
+
+        .box {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .city-container {
+            margin-top: 20px;
+        }
+
+        .remove-button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .remove-button:hover {
+            background-color: darkred;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="hero is-primary">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">What's the weather like?</h1>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-offset-4 is-4">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ form.as_p }} <!-- Render the form field -->
+                        <button class="button is-info" type="submit">Add City</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            {% for weather in weather_data %}
+            <div class="city-container" style="background-image: url('{{ weather.image_url }}');">
+                <div class="columns">
+                    <div class="column is-offset-4 is-4">
+                        <div class="box">
+                            <article class="media">
+                                <div class="media-left">
+                                    <figure class="image is-50x50">
+                                        <img src="http://openweathermap.org/img/w/{{ weather.icon }}.png"
+                                            alt="Weather Icon">
+                                    </figure>
+                                </div>
+                                <div class="media-content">
+                                    <div class="content">
+                                        <p>
+                                            <span class="title">{{ weather.city }}</span>
+                                            <br>
+                                            <span class="subtitle">{{ weather.temperature }}°F</span>
+                                            <br>
+                                            {{ weather.description }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </article>
+                            <form method="POST">
+                                {% csrf_token %}
+                                <button type="submit" name="remove_city" value="{{ weather.city }}"
+                                    class="remove-button">
+                                    Remove City
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <footer class="footer">Powered by OpenWeather and Unsplash</footer>
+</body>
+
+</html>
